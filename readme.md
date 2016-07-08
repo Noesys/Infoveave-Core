@@ -37,3 +37,10 @@ disclosing the source code of your own applications.
 
 ### Client
 - Clone the Infoveave-WebClient repository seperately and copy the output to wwwroot folder
+
+---
+
+##Publish
+
+from Infoveave Folder run `dotnet publish --configuration=Release` 
+and make sure you copy over output of WebClient to wwwroot folder
