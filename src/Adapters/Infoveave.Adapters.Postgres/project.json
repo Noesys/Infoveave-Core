@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0-*",
+  "dependencies": {
+    "Infoveave.AdapterFramework": "2.0.0-*",
+    "Microsoft.Extensions.Logging.Abstractions": "1.0.0",
+    "npgsql": "3.1.5"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dnxcore50"
+      ],
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        },
+        "System.Data.Common": "4.1.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "projects": [ "src", "test", "src/Core", "src/Office", "src/WhatIf", "src/Adapters", "src/Caching" ],
+  "sdk": {
+    "version": "1.0.0-preview1-002702"
+  }
+}

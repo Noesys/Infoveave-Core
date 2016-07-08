@@ -1,0 +1,70 @@
+[
+  {
+    "module": "Infoboards",
+    "displayName": "Infoboards",
+    "displayPath": "Infoboards",
+    "views": [
+      {
+        "view": "Infoboards",
+        "displayName": "Infoboards",
+        "actions": [ "List", "Add", "Edit", "Delete", "ExportDefault" ]
+      },
+      {
+        "view": "Widget",
+        "displayName": "Widgets",
+        "actions": [ "List", "Add", "Edit", "Delete" ]
+      }
+    ]
+  },
+  {
+    "module": "UserManagement",
+    "displayName": "User Management",
+    "displayPath": "Administration",
+    "views": [
+      {
+        "view": "User",
+        "displayName": "User",
+        "actions": [ "List", "Add", "Modify", "Delete","Reset","Unlock" ]
+      },
+      {
+        "view": "Role",
+        "displayName": "Role",
+        "actions": [ "List", "Add", "Modify", "Delete" ]
+      }
+    ]
+  },
+  {
+    "module": "DataManagement",
+    "displayPath": "Administration",
+    "displayName": "Data Management",
+    "views": [
+      {
+        "view": "DataSource",
+        "displayName": "DataSource",
+        "actions": [ "List", "Add", "Modify", "Delete", "Upload" ]
+      },
+      {
+        "view": "MondrianDataSource",
+        "displayName": "Mondrian DataSource",
+        "actions": [ "List", "Add", "Modify", "Delete" ]
+      }
+    ]
+  },
+  {
+    "module": "Reports",
+    "displayPath": "Reports",
+    "displayName": "Reports",
+    "views": [
+      {
+        "view": "DataReports",
+        "displayName": "Data Reports",
+        "actions": [ "List", "Add", "Modify", "Delete", "Run" ]
+      },
+      {
+        "view": "QueryBuilder",
+        "displayName": "Query Builder",
+        "actions": [ "List", "Add", "Modify", "Delete" ]
+      }
+    ]
+  }
+]

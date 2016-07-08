@@ -1,0 +1,44 @@
+﻿{
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    },
+    "Path": "C:\\Infoveave\\Logs"
+  },
+  "Application": {
+    "ApplicationBaseURL": "infoveave.net",
+    "IsHTTPSEnabled": false,
+    "TenantDatabaseLocation": "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Infoveave\\Data\\Infoveave.AppDB.mdf;Integrated Security=True;" ,
+    "Paths": {
+      "Reports": "C:\\Infoveave\\Data",
+      "Configurations": "C:\\Infoveave\\Data",
+      "Images": "C:\\Infoveave\\Data"
+    },
+    "AnalyticsData": {
+      "AnalyticsAdapter": "mondrianService",
+      "SQLAdapter": "mssql",
+      "ConnectionString": "C:\\Infoveave\\Data"
+    },
+    "Caching": {
+      "Enabled": true,
+      "Endpoint": "localhost",
+      "Port": 6379
+    },
+    "MondrianService": {
+      "Endpoint": "localhost",
+      "Port": 9998
+    },
+    "Mailer": {
+      "SmtpServer": "smtpServer.org",
+      "SmtpPort": 587,
+      "SmtpUsername": "test@smtpServer.org",
+      "SmtpPassword": "testPassword",
+      "FromName": "Infoveave-CE",
+      "FromAddress": "no-reply@infoveave.org",
+      "CopyAll": "naresh@noesyssoftware.com;"
+    }
+  }
+}

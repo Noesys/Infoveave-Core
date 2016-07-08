@@ -1,0 +1,45 @@
+{
+  "title": "Infoveave",
+  "description": "Visual Ananlytics Studio",
+  "copyright": "© 2015-2016 Noesys Software Pvt.Ltd. - All Rights Reserved",
+  "authors": [ "Naresh Jois<naresh@noesyssoftware.com>" ],
+  "version": "2.0.0-*",
+  "dependencies": {
+    "Microsoft.EntityFrameworkCore.Tools": {
+      "version": "1.0.0-preview2-final",
+      "type": "build"
+    },
+    "Microsoft.EntityFrameworkCore": "1.0.0",
+    "Infoveave.Models": "2.0.0-*",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.0.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        },
+        "System.Data.Common": "4.1.0"
+      }
+    }
+  },
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+  "tools": {
+    "Microsoft.EntityFrameworkCore.Tools": {
+      "version": "1.0.0-preview2-final",
+      "imports": [
+        "portable-net45+win8+dnxcore50",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}
