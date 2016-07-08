@@ -16,7 +16,7 @@ disclosing the source code of your own applications.
 
 - .net Framework 4.6.1
 - .net Core RTM (For OSS)
-- Visual Studio 2015 UPdate 3 (Community / Professional)
+- Visual Studio 2015 Update 3 (Community / Professional)
 
 ---
 
