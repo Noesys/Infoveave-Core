@@ -2,7 +2,7 @@
 
 &copy; 2015-2016, Noesys Software Pvt Ltd. 
 
-Dual Licensed under Infoveave Commercial and APLv3
+Dual Licensed under Infoveave Commercial and AGPLv3
 
 You should have received a copy of the GNU Affero General Public License v3
 along with this program (Infoveave)
