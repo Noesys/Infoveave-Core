@@ -27,25 +27,6 @@ namespace Infoveave.Helpers
         public async static Task<AdapterFramework.OlapConnection> TransformConnectionForAdapter(string adapter, string tenant, long dataSourceId,AdapterFramework.OlapConnection connection, ApplicationConfiguration configuration, HttpContext httpContext, HttpRequest request, CancellationToken cancellationToken)
         {
             await Task.Delay(0);
-            if (adapter == "mondrianService")
-            {
-                var sqlConnection = JsonConvert.DeserializeObject<SQLConnection>(connection.Server);
-                if (sqlConnection.Type == "sqlite")
-                {
-                    sqlConnection.Server = Path.Combine(configuration.Application.AnalyticsData.ConnectionString, tenant);
-                }
-                connection.Server = JsonConvert.SerializeObject(sqlConnection);
-                var authority = "http://" + request.Host;
-                connection.Database = new Uri(authority + "/Services/" + tenant + "/" + dataSourceId + "/Mondrian4").ToString();
-                connection.AdditionalData = string.Format("http://{0}:{1}", configuration.Application.MondrianService.Endpoint, configuration.Application.MondrianService.Port);
-                return connection;
-            }
-#if NET461
-            if (adapter == "googleAnalytics")
-            {
-                connection.AdditionalData = await GoogleAuth.GetAuthorisation(configuration.Application.Paths["Configurations"], tenant, connection.Server, cancellationToken);
-            }
-#endif
             if (adapter == "mondrianDirect")
             { 
                 var sqlConnection = JsonConvert.DeserializeObject<SQLConnection>(connection.Server);
@@ -60,14 +41,6 @@ namespace Infoveave.Helpers
         public async static Task<SQLConnection> TransformSQLConnection(SQLConnection connection, string tenant, ApplicationConfiguration configuration)
         {
             await Task.Delay(0);
-            if (connection.Type == "sqlite")
-            {
-                connection.Server = Path.Combine(configuration.Application.AnalyticsData.ConnectionString, tenant);
-            }
-            if (connection.Type == "druid")
-            {
-                connection.Server = tenant;
-            }
             return connection;
         }
 
