@@ -328,166 +328,39 @@ namespace Infoveave.Controllers
 
 
         /// <summary>
-        /// Get Calculated Measures
+        /// Flush Mondrian and Redis Cache
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        [HttpGet("{id}/CalculatedMeasures")]
-        [Versions("v2")]
-        public async Task<List<CalculatedMeasure>> GetCalculatedMeasures(long id, CancellationToken cancellationToken = default(CancellationToken))
+        [HttpGet("CleanCache")]
+        [AllowAnonymous]
+        public async Task<IActionResult> FlushCache(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var tenantContext = TenantContext.GetTenantRepository(CurrentUser.Tenant);
-            var measures = await tenantContext.Measures.GetAll().Where(m => m.DataSourceId == id && string.IsNullOrEmpty(m.Aggregation)).ToListAsync();
-            return measures.Select(m => new CalculatedMeasure
+            var tenantContext = TenantContext.GetTenantRepository("default");
+            var dataSources = await tenantContext.DataSources.GetAll().ToListAsync(cancellationToken);
+
+            foreach (var dataSource in dataSources)
             {
-                Id = m.Id,
-                Name = m.Name,
-                Description = m.Description,
-                Query = m.Query,
-                Formula = m.DataQuery,
-                Prefix = m.Prefix,
-                Suffix = m.Suffix,
-                IsPercent = bool.Parse(m.IsPercent),
-            }).ToList();
-
-        }
-
-        /// <summary>
-        /// Add New Calculated Measure
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="measure"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPost("{id}/CalculatedMeasures")]
-        [Versions("v2")]
-        public async Task<CalculatedMeasure> AddCalculatedMeasures(long id, [FromBody]CalculatedMeasure measure, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var tenantContext = TenantContext.GetTenantRepository(CurrentUser.Tenant);
-            Models.Measure saveMeasure = new Models.Measure()
-            {
-                Name = measure.Name,
-                Description = measure.Description,
-                Aggregation = null,
-                DataQuery = measure.Formula,
-                ColumnName = null,
-                Prefix = measure.Prefix,
-                Suffix = measure.Suffix,
-                IsPercent = measure.IsPercent.ToString(),
-                CreatedOn = DateTime.Now,
-                DataSourceId = id,
-                Query = measure.Query
-            };
-            tenantContext.Measures.Add(saveMeasure);
-            await tenantContext.CommitAsync();
-            await this.FlushCache(CurrentUser.Tenant, id, cancellationToken);
-            var m = saveMeasure;
-            return new CalculatedMeasure
-            {
-                Id = m.Id,
-                Name = m.Name,
-                Description = m.Description,
-                Query = m.Query,
-                Formula = m.DataQuery,
-                Prefix = m.Prefix,
-                Suffix = m.Suffix,
-                IsPercent = bool.Parse(m.IsPercent),
-            };
-
-        }
-
-        /// <summary>
-        /// Update Calculated Measure
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="measureId"></param>
-        /// <param name="measure"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpPut("{id}/CalculatedMeasures/{measureId}")]
-        [Versions("v2")]
-        public async Task<CalculatedMeasure> UpdateCalculatedMeasures(long id, long measureId, [FromBody]CalculatedMeasure measure, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var tenantContext = TenantContext.GetTenantRepository(CurrentUser.Tenant);
-            var saveMeasure = await tenantContext.Measures.GetAll().FirstOrDefaultAsync(me => me.Id == measureId);
-            if (saveMeasure == null) throw new Exception("DS-005", new Exception("Calculated Measure Not Found"));
-            saveMeasure.Name = measure.Name;
-            saveMeasure.Description = measure.Description;
-            saveMeasure.Aggregation = null;
-            saveMeasure.DataQuery = measure.Formula;
-            saveMeasure.ColumnName = null;
-            saveMeasure.Prefix = measure.Prefix;
-            saveMeasure.Suffix = measure.Suffix;
-            saveMeasure.IsPercent = measure.IsPercent.ToString();
-            saveMeasure.Query = measure.Query;
-            tenantContext.Measures.Update(saveMeasure);
-            await tenantContext.CommitAsync();
-            await this.FlushCache(CurrentUser.Tenant, id, cancellationToken);
-            var m = saveMeasure;
-            return new CalculatedMeasure
-            {
-                Id = m.Id,
-                Name = m.Name,
-                Description = m.Description,
-                Query = m.Query,
-                Formula = m.DataQuery,
-                Prefix = m.Prefix,
-                Suffix = m.Suffix,
-                IsPercent = bool.Parse(m.IsPercent),
-            };
-
-        }
-
-        /// <summary>
-        /// Delete Calulated Measure
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="measureId"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        [HttpDelete("{id}/CalculatedMeasures/{measureId}")]
-        [Versions("v2")]
-        public async Task<IActionResult> DeleteCalculatedMeasures(long id, long measureId, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var tenantContext = TenantContext.GetTenantRepository(CurrentUser.Tenant);
-            var saveMeasure = await tenantContext.Measures.GetAll().FirstOrDefaultAsync(me => me.Id == measureId);
-            if (saveMeasure == null) throw new Exception("DS-005", new Exception("Calculated Measure Not Found"));
-            tenantContext.Measures.Delete(saveMeasure);
-            await tenantContext.CommitAsync();
-            await this.FlushCache(CurrentUser.Tenant, id, cancellationToken);
+                var olapAdapter = Helpers.Adapters.OlapAdapters["mondrianService"];
+                var olapConnection = new OlapConnection
+                {
+                    Server = dataSource.Server,
+                    Database = dataSource.AnalysisDataBase,
+                    Cube = dataSource.Cube,
+                    AdditionalData = dataSource.ConnectionString
+                };
+                olapConnection = await OlapAdapterHelpers.TransformConnectionForAdapter("mondrianDirect", "default", dataSource.Id, olapConnection, Configuration, HttpContext, Request, cancellationToken);
+                try
+                {
+                    await olapAdapter.FlushCache(olapConnection);
+                    await CacheProvider.RefreshDataSourceAsync(olapAdapter, olapConnection);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError("Error While flushing cache", ex);
+                }
+            }
             return Ok();
-
-        }
-
-        /// <summary>
-        /// Internal
-        /// </summary>
-        /// <param name="tenant"></param>
-        /// <param name="id"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        protected async Task FlushCache(string tenant, long id, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var tenantContext = TenantContext.GetTenantRepository(tenant);
-            var dataSource = await tenantContext.DataSources.GetAll().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
-            var olapAdapter = Helpers.Adapters.OlapAdapters[dataSource.ServerType];
-            var olapConnection = new OlapConnection
-            {
-                Server = dataSource.Server,
-                Database = dataSource.AnalysisDataBase,
-                Cube = dataSource.Cube,
-            };
-            olapConnection = await OlapAdapterHelpers.TransformConnectionForAdapter(dataSource.ServerType, CurrentUser.Tenant, id, olapConnection, Configuration, HttpContext, Request, cancellationToken);
-            try
-            {
-                await olapAdapter.FlushCache(olapConnection);
-                await CacheProvider.RefreshDataSourceAsync(olapAdapter, olapConnection);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("Error While flushing cache", ex);
-            }
         }
 
 
@@ -712,6 +585,9 @@ namespace Infoveave.Controllers
                 Type = dataSourceToSave.ServerType
             };
         }
+
+
+
 
         #endregion
 
