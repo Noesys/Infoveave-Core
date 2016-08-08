@@ -47,6 +47,11 @@
         "view": "MondrianDataSource",
         "displayName": "Mondrian DataSource",
         "actions": [ "List", "Add", "Modify", "Delete" ]
+      },
+      {
+        "view": "ColorPalette",
+        "displayName": "Color Palette",
+        "actions": ["Modify"]
       }
     ]
   },
