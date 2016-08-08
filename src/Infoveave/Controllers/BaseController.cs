@@ -1,4 +1,4 @@
-﻿/* Copyright © 2015-2016 Noesys Software Pvt.Ltd. - All Rights Reserved
+/* Copyright © 2015-2016 Noesys Software Pvt.Ltd. - All Rights Reserved
  * -------------
  * This file is part of Infoveave.
  * Infoveave is dual licensed under Infoveave Commercial License and AGPL v3  

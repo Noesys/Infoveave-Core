@@ -572,6 +572,36 @@ namespace Infoveave.Controllers
                     tenantContext.Infoboards.Add(ii);
                 });
                 await tenantContext.CommitAsync();
+                foreach (var infoboard in newInfoboards)
+                {
+                    var infoboardLayout = JsonConvert.DeserializeObject<InfoboardLayout>(infoboard.Layouts);
+                    if (infoboardLayout.lg != null && infoboardLayout.lg.Count > 0)
+                    {
+                        foreach (var item in infoboardLayout.lg)
+                        {
+                            var linkId = infoboard.Items.Where(i => i.PositionX == item.x && i.PositionY == item.y && i.VerticalSize == item.h && i.HorizontalSize == item.w).FirstOrDefault();
+                            if (linkId != null) item.i = (int)linkId.Id;
+                        }
+                    }
+                    if (infoboardLayout.md != null && infoboardLayout.md.Count > 0)
+                    {
+                        foreach (var item in infoboardLayout.md)
+                        {
+                            var linkId = infoboard.Items.Where(i => i.PositionX == item.x && i.PositionY == item.y && i.VerticalSize == item.h && i.HorizontalSize == item.w).FirstOrDefault();
+                            if (linkId != null) item.i = (int)linkId.Id;
+                        }
+                    }
+                    if (infoboardLayout.sm != null && infoboardLayout.sm.Count > 0)
+                    {
+                        foreach (var item in infoboardLayout.sm)
+                        {
+                            var linkId = infoboard.Items.Where(i => i.PositionX == item.x && i.PositionY == item.y && i.VerticalSize == item.h && i.HorizontalSize == item.w).FirstOrDefault();
+                            if (linkId != null) item.i = (int)linkId.Id;
+                        }
+                    }
+                    infoboard.Layouts = JsonConvert.SerializeObject(infoboardLayout);
+                }
+                await tenantContext.CommitAsync();
                 return Ok();
             }catch(Exception ex)
             {
